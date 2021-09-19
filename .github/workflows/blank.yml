@@ -1,0 +1,63 @@
+    For $i = 1 To $theWinlist[0][0]
+            If $theWinlist[$i][0] <> "" Then
+                $iPID2 = WinGetProcess($theWinlist[$i][1])
+                If $iPID2 = $aPID Then
+                    $hWnd2 = $theWinlist[$i][1]
+                    ExitLoop
+                EndIf
+            EndIf
+        Next
+    Until $hWnd2 <> 0
+    Sleep(1000)
+
+    Send("{ALT}FO")
+    WinWaitActive("Open Source File(s)", "", 10)
+    Sleep(200)
+    ControlClick("Open Source File(s)", "", 1)
+    Sleep(200)
+    Send("^a{ENTER}")
+    Sleep(200)
+    Do
+        Sleep(200)
+        If WinExists("@icon sushi", "is not a supported file") Then
+            Sleep(200)
+            Send("{ENTER}")
+        EndIf
+        $treeCtrl = ControlGetHandle($hWnd2, "", "[CLASS:TListView; INSTANCE:1]")
+        ControlClick($hWnd2, "", $treeCtrl, "", "", 34, 29)
+        $textCtrl = ControlGetHandle($hWnd2, "", "[CLASS:TPanel; INSTANCE:3]")
+    Until ControlGetText($hWnd2, "", $textCtrl) <> ""
+    Sleep(200)
+
+    While 1
+        $textSrch = ControlGetText($hWnd2, "", $textCtrl)
+        If $textSrch = $last Then ExitLoop
+        If StringInStr($textSrch, "256 x 256") Then
+            Send("{ALT}L")
+            Sleep(30)
+            Send("D")
+            Sleep(30)
+            Send("D{ENTER}")
+        Else
+            Send("{DOWN}")
+        EndIf
+        $last = $textSrch
+    WEnd
+    Sleep(200)
+    Send("{ALT}LA")
+    Sleep(200)
+    Send("{ALT}TG")
+    WinWaitActive("Browse for Folder", "", 10)
+    $hnd = WinGetHandle("Browse for Folder")
+    ControlClick($hnd, "", 14145)
+    Sleep(100)
+    Send("ico2dlltemp")
+    Sleep(100)
+    Send("{RIGHT}")
+    Sleep(100)
+    Send("{RIGHT}")
+    Sleep(100)
+    Send("{ENTER}")
+    WinClose($hWnd2)
+    WinWaitClose($hWnd2)
+EndFunc   ;==>Rmv256
